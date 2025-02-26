@@ -1,2 +1,2 @@
 node_modules
-worker/auth.json
+auth/credential.json
