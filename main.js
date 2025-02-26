@@ -4,6 +4,9 @@ const { onlyGet, db } = require("./lib/db_services/library");
 const { state } = require("./lib/state");
 const { Worker } = require("worker_threads");
 
+// set rootDir
+state.rootDir = __dirname;
+
 const getDataLink = async () => {
   const sql = `SELECT Z, ID, LinkLokal FROM DataAbsensi WHERE ID LIKE "%https://%";`;
 
@@ -20,11 +23,12 @@ const main = async () => {
   console.log("Getting Data From DB : " + files.length);
   const newList = splitArray(files, 100);
   let fromGDrive = [];
-  const numberOfThreads = 5;
+  const numberOfThreads = 8;
 
   if (files.length === 0) return console.log("Data Not Found");
 
   process.stdout.write("\rGetting Data From GDrive...\r");
+  let currentPairing = 0;
   const listFiles = await Promise.all(
     newList.map(async (files, index) => {
       let result = (await getMultipleFileID(files?.map((item) => item?.ID)))
@@ -38,12 +42,13 @@ const main = async () => {
         return {
           Z: found?.Z,
           ID: item?.id,
-          LinkLokal: found?.ID,
+          LinkLokal: found?.url,
         };
       });
 
-      // const persentage = ((index + 1) / newList.length) * 100;
-      // process.stdout.write(`Pairing Data :${persentage.toFixed(2)}%\r`);
+      currentPairing++;
+      const persentage = (currentPairing / newList.length) * 100;
+      process.stdout.write(`Pairing Data :${persentage.toFixed(2)}%\r`);
 
       return result;
     })
@@ -121,7 +126,20 @@ const main = async () => {
             uploaded: accData?.length,
           });
           console.log("Trying to update data...");
+        }
+      });
 
+      worker.on("error", (error) => {
+        currentWorker++;
+        console.log({ error, info: `Worker ${index} error` });
+      });
+      worker.on("exit", (code) => {
+        if (code !== 0)
+          console.log({
+            info: `Worker ${index} stopped with exit code ${code}`,
+          });
+
+        if (currentWorker === dataWorker?.length)
           setTimeout(async () => {
             writeToFile(__dirname + "/worker/auth.json", {});
 
@@ -131,17 +149,6 @@ const main = async () => {
               console.log("Data not found");
             }
           }, 2000);
-        }
-      });
-
-      worker.on("error", (error) =>
-        console.log({ error, info: `Worker ${index} error` })
-      );
-      worker.on("exit", (code) => {
-        if (code !== 0)
-          console.log({
-            info: `Worker ${index} stopped with exit code ${code}`,
-          });
       });
     });
     return;

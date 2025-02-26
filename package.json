@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "nodemon index.js --ignore worker/auth.json",
     "try": "nodemon try.js --trace-warnings ",
+    "restore": "nodemon restoreImage.js --trace-warnings ",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
