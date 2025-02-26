@@ -1,0 +1,21 @@
+{
+  "name": "drive-manager",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js --ignore worker/auth.json",
+    "try": "nodemon try.js --trace-warnings ",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@google-cloud/local-auth": "^3.0.1",
+    "axios": "^1.7.9",
+    "google-auth-library": "^9.15.1",
+    "googleapis": "^144.0.0",
+    "mysql2": "^3.12.0"
+  }
+}
