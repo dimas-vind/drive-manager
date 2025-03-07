@@ -5,7 +5,10 @@
   "scripts": {
     "dev": "nodemon index.js --ignore worker/auth.json",
     "try": "nodemon try.js --trace-warnings ",
-    "restore": "nodemon restoreImage.js --trace-warnings ",
+    "backup": "nodemon --expose-gc backupImage.js --ignore worker/auth.json",
+    "upload": "nodemon --expose-gc uploadImage.js --ignore worker/auth.json",
+    "auth": "nodemon --expose-gc authentication.js --ignore worker/auth.json",
+    "groupfile": "nodemon --expose-gc grouping.file.js --ignore worker/auth.json",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -15,6 +18,7 @@
   "dependencies": {
     "@google-cloud/local-auth": "^3.0.1",
     "axios": "^1.7.9",
+    "glob": "^11.0.1",
     "google-auth-library": "^9.15.1",
     "googleapis": "^144.0.0",
     "mysql2": "^3.12.0"

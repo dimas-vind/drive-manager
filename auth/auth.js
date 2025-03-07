@@ -1,7 +1,7 @@
 const { authenticate } = require("@google-cloud/local-auth");
 const path = require("path");
 const { state } = require("../lib/state");
-const { isEmptyObject } = require("../lib/library");
+const { isEmptyObject, writeToFile } = require("../lib/library");
 
 state.auth = {};
 state.setAuth = (_auth) => (state.auth = _auth);
@@ -24,6 +24,12 @@ class Init {
     state.dispatch("setAuth", [_auth]);
 
     return _auth;
+  }
+
+  async writeAuth() {
+    const store = __dirname.split("\\").slice(0, -1).join("\\");
+    const _auth = await this.getNewAuth();
+    return writeToFile(path.join(store, "/worker/auth.json"), _auth);
   }
 }
 
